@@ -1,0 +1,130 @@
+{% extends "navbar.html" %}
+{% block title %}Slot Booking{% endblock %}
+{% block body %}
+<style>
+.container{
+    display: flex;
+    
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+
+}
+.card {
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.btn-block {
+    width: 100%;
+}
+
+.table {
+    width: 100%;
+}
+
+.table th,
+.table td {
+    text-align: center;
+}
+
+.display-4 {
+    margin-bottom: 30px;
+}
+.hot{
+    margin-left: 150px;
+}
+
+</style>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<div class="display-4 text-center text-info">Book your bed</div>
+<div class="container mt-4  ">
+    
+    <br>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                {% include "message.html" %}
+                <h2 class="text-center mt-6">BedWise Connect</h2>
+                <div class="card-body bg-light">
+                    <form class="formmain" action="/slotbooking" method="post">
+                        <div class="form-group">
+                            <input type="text" name="srfid" class="form-control col px-md-5" value="{{current_user.srfid}}" readonly required>
+                        </div>
+                        <div class="form-group col px-md-5">
+                            <select id="bedtype" name="bedtype" class="form-control">
+                              <option selected>Choose bed type</option>
+                              <option value="Normalbed">Normal bed</option>
+                              <option value="HICUbed">HICU bed</option>
+                              <option value="ICUbed">ICU bed</option>
+                              <option value="Ventilatorbed">Ventilator bed</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="code" class="form-control mt-2" placeholder="Enter Hospital code" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="number" name="spo2" class="form-control mt-2" placeholder="Oxygen level" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="pname" class="form-control mt-2" placeholder="Enter Patient name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="number" name="pphone" class="form-control mt-2" placeholder="Enter number" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="paddress" class="form-control mt-2" placeholder="Enter Address"  required>
+                        </div>
+                        <br>
+                        <button class="btn btn-info" type="submit">Book</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 hot">
+            <h3 class="text-center ">Available beds</h3>
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Hospital code</th>
+                    <th scope="col">Hospital name</th>
+                    <th scope="col">Normal beds</th>
+                    <th scope="col">HICU beds</th>
+                    <th scope="col">ICU beds</th>
+                    <th scope="col">Ventilator beds</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for post in query %}
+                  <tr>
+                    <td>{{post.code}}</td>
+                    <td>{{post.hname}}</td>
+                    <td>{{post.normalbeds}}</td>
+                    <td>{{post.hicubeds}}</td>
+                    <td>{{post.icubeds}}</td>
+                    <td>{{post.vbeds}}</td>
+                  </tr>
+                    {% endfor %}
+                  
+                  
+                </tbody>
+              </table>
+        </div>
+    </div>
+</div>
+{% endblock body %}

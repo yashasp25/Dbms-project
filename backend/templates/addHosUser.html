@@ -1,0 +1,64 @@
+{% extends 'baselogin.html' %}
+{% block title %}
+Hospital User
+{% endblock title %}
+{% block form %}
+<h2>Add Hospital user</h2>
+{% include "message.html" %}
+
+
+<div class="row">
+    <div class="col-md-4">
+    <a href="/logoutadmin" class="btn btn-danger">Logout</a></div>
+    <div class="col-md-4">
+        <form action="/addhospitalUser" method="post">
+            <div class="form-group">
+                <input type="text" class="form-control mt-2" placeholder="Enter Hospital Code" name="code" required>
+            </div>
+            <div class="form-group">
+                <input type="email" class="form-control mt-2" placeholder="Enter Email ID" name="email" required>
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control mt-2" placeholder="Enter password" name="password" required>
+            </div>
+            <br>
+            <button class="btn btn-info" type="submit">Add</button>
+        </form>
+
+
+    </div>
+    <div class="col-md-4"></div>
+<!-- </div>
+<div class="container" mt-2>
+    <table class="table">
+        <h3>Triggered data</h3>
+        <thead>
+          <tr>
+            <th scope="col">Hospital code</th>
+            <th scope="col">Normal beds</th>
+            <th scope="col">HICU beds</th>
+            <th scope="col">ICU beds</th>
+            <th scope="col">Ventilator beds</th>
+            <th scope="col">Action</th>
+            <th scope="col">Date</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for post in query %}
+          <tr>
+            <td>{{post.code}}</td>
+            <td>{{post.normalbeds}}</td>
+            <td>{{post.hicubeds}}</td>
+            <td>{{post.icubeds}}</td>
+            <td>{{post.vbeds}}</td>
+            <td>{{post.querys}}</td>
+            <td>{{post.date}}</td>
+          </tr>
+            {% endfor %}
+          
+          
+        </tbody>
+      </table>
+</div>
+ -->
+{% endblock form %}

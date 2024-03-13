@@ -1,0 +1,89 @@
+{% extends "navbar.html" %}
+{% block title %}Slot Booking{% endblock %}
+{% block body %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About us</title>
+
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        body{
+            height: 742px;
+            width: 100%;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            background-image: url();
+            font-style: normal;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        h1 {
+            color: #32a8a8;
+        }
+
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+        }
+
+
+        .img {
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            margin-right: 80px;
+        }
+        .image{
+            margin: 20px;
+            padding: 20px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="main">
+        <div class="text">
+            <center>
+                <h1>TEAM MEMBERS</h1>
+                <br>
+                <br>
+            </center>
+        </div>
+        <div class="container">
+            <div class="image">
+                <p>SAGAR H S</p>
+                <P>4JN21CS134</P>
+            </div>
+            <div class="image">
+                <p>VARUN K T</p>
+                <P>4JN21CS181</P>
+            </div>
+            <div class="image">
+                
+                <p>VISMAYA P N</p>
+                <P>4JN21CS189</P>
+            </div>
+            <div class="image">
+                <!-- <img class="img" src="yashas.jpg" alt="Member 4"> -->
+                <p>YASHAS P</p>
+                <P>4JN21CS190</P>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>
+{% endblock body %}
