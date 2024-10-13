@@ -9,34 +9,24 @@ from werkzeug.security import generate_password_hash,check_password_hash
 import json
 from flask_mail import Mail
 from functools import wraps
+import re
 
-#my database connections
+#my app initialization
 local_server = True
 app = Flask(__name__)
 app.secret_key="yashasp"
 
 
+
 with open('config.json','r') as e:
     params=json.load(e)["params"]
-#to config the mailapp
-# app.config.update(
-#     MAIL_SERVER='smtp.gmail.com',
-#     MAIL_PORT='587',
-#     MAIL_USE_SSL=True,
-#     MAIL_USERNAME=params['gmail-user'],
-#     MAIL_PASSWORD=params['gmail-password']
-#     )
-# mail=Mail(app)
-
-#Trials
-# engine = create_engine('mysql://root:@localhost/bedslot')
 
 
 #set login manager(for getting unique user access)
 login_manager=LoginManager(app)
 login_manager.login_view='login'
 
-#actual connection
+#actual connection initi sqlalkemy object
 # app.config['SQLALCHEMY_DATABASE_URI']='mysql://username:password@localhost/datbasename'
 app.config['SQLALCHEMY_DATABASE_URI']='mysql://root:@localhost/bedslot'
 db=SQLAlchemy(app)#telling what all
@@ -98,7 +88,13 @@ class Booking(db.Model):
     pphone=db.Column(db.Integer)
     paddress=db.Column(db.String(40))
 
-
+# Email validation function
+def is_valid_email(email):
+    regex = r'^\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+    if re.match(regex, email):
+        return True
+    else:
+        return False
 
 @app.route("/")
 def home():
@@ -113,32 +109,37 @@ def trigers():
     query=Trig.query.all()
     return render_template("trigers.html",query=query)
 
-@app.route("/signup",methods=['POST','GET'])
+@app.route("/signup", methods=['POST', 'GET'])
 def signup():
-    if request.method=="POST":
-        srfid=request.form.get('srf')
-        email=request.form.get('email')
-        dob=request.form.get('dob')
-        # print(srfid,email,dob)
+    if request.method == "POST":
+        srfid = request.form.get('srf')
+        email = request.form.get('email')
+        dob = request.form.get('dob')
 
-        encpassword=generate_password_hash(dob)
-        user=User.query.filter_by(srfid=srfid).first()
-        emailUser=User.query.filter_by(email=email).first()
-        if user or emailUser:
-            flash("Email or SRFID already exist","Warning")
+        if not is_valid_email(email):
+            flash("Invalid email address", "warning")
             return render_template("usersignup.html")
-        #inserting value in table thro' query
+
+        encpassword = generate_password_hash(dob)
+        user = User.query.filter_by(srfid=srfid).first()
+        emailUser = User.query.filter_by(email=email).first()
+        
+        if user or emailUser:
+            flash("Email or SRF ID already exists", "warning")
+            return render_template("usersignup.html")
+        
         # Creating a new user instance
         new_user = User(srfid=srfid, email=email, dob=encpassword)
         # Adding the new user to the database session
         db.session.add(new_user)
         # Committing the transaction to the database
         db.session.commit()
-        #direct access without login page
-        user1=User.query.filter_by(srfid=srfid).first()
-        if user1 and check_password_hash(user1.dob,dob):
+        
+        # Direct access without login page
+        user1 = User.query.filter_by(srfid=srfid).first()
+        if user1 and check_password_hash(user1.dob, dob):
             login_user(user1)
-            flash("SignIn Success",'success')
+            flash("SignIn Success", 'success')
             return render_template('index.html')
 
     return render_template('usersignup.html')
@@ -167,6 +168,9 @@ def hospitallogin():
         email=request.form.get('email')
         password=request.form.get('password')
         user=Hospitaluser.query.filter_by(email=email).first()
+        if not is_valid_email(email):
+            flash("Invalid email address", "warning")
+            return render_template("hospitallogin.html")
 
         if user and check_password_hash(user.password,password):
             login_user(user)
@@ -204,26 +208,14 @@ def hospitalUser():
             password=request.form.get('password')
             code=code.upper()
             encpassword=generate_password_hash(password)
+            if not is_valid_email(email):
+                flash("Invalid email address", "warning")
+                return render_template("addHosUser.html")
+            # code=Hospitaluser.query.filter_by(code=code).first()
             emailUser=Hospitaluser.query.filter_by(email=email).first()
             if emailUser:
                 flash("Email already exist","Warning")
 
-            # Assuming you have configured your SQLAlchemy engine
-            # Replace 'your_database_url' with the actual URL for the "bedslot" database
-            # engine = create_engine('mysql://root:@localhost/bedslot')
-
-            
-
-            # # Assuming you have defined 'code', 'email', and 'encpassword' variables
-            # # Insert the new user into the hospitaluser table using parameterized query
-            # try:
-            #     with engine.connect() as connection:
-            #         query = "INSERT INTO hospitaluser (code, email, password) VALUES (%s, %s, %s)"
-            #         connection.execute(query, (code, email, encpassword))
-            #         print("User inserted successfully!")
-            # except Exception as e:
-            #     print("Error occurred:", e)
-        #inserting value in table thro' query
         # Creating a new user instance
             new_hos_user = Hospitaluser(code=code, email=email, password=encpassword)
             # Adding the new user to the database session
@@ -231,7 +223,6 @@ def hospitalUser():
             # Committing the transaction to the database
             db.session.commit()
 #sending data to email   #First argument=(subject) 2nd argument=(sender)
-            # mail.send_message('BedWiseConnect',sender=params ['gmail-user'],recipients=[email],body=f"Welcome Thanks for choosing us\nYour login details are\nEmail address: {email}\nPassword:{password}\n\n\nDo not share your password\n\nThank you")
             flash("Data sent and inserted succesfully","warning")
             return render_template("addHosUser.html")
     else:
@@ -267,43 +258,19 @@ def logoutadmin():
     flash("You are logged out admin","primary")
     return redirect('/admin')
 
-# @app.route("/addhospitalinfo",methods=['POST','GET'])
-# def addhospitalinfo():
-#     session ['email'] = current_user.email
-#     posts=Hospitaluser.query.filter_by(email=session ['email']).first()
-#     code=posts.code
-#     if request.method=="POST":
-#         code=request.form.get('code')
-#         hname=request.form.get('hname')
-#         nbed=request.form.get('normalbeds')
-#         hbed=request.form.get('hicubeds')
-#         ibed=request.form.get('icubeds')
-#         vbed=request.form.get('vbeds')
-#         code=code.upper()
-#         email= session.get('email')
-#         huser=Hospitaluser.query.filter_by(code=code).first()
-#         hduser=Hospitaldata.query.filter_by(code=code).first()
-#         if hduser:
-#             flash("Data is already present you can update ","primary")
-#             return render_template("hospitaldata.html")
-#         if huser:
-#             session['email']=huser.email
-#             print({{huser.email}})
-#             new_hos_data = Hospitaluser(code=code, hname=hname, normalbeds=nbed, hicubeds=hbed, icubeds=ibed, vbeds=vbed)
-#             db.session.add(new_hos_data)
-#             db.session.commit()
-#             flash("Data is added","primary")
-#         else:
-#             flash("Hospital code doesnt exist","warning")
-#     return render_template("hospitaldata.html")
-
 @app.route("/addhospitalinfo", methods=['POST', 'GET'])
-@login_required
+# @login_required
 def addhospitalinfo():
-    email= current_user.email
+    email = current_user.email
     posts = Hospitaluser.query.filter_by(email=email).first()
+
+    if posts is None:
+        flash("User data not found", "danger")
+        return redirect("/hospitallogin")  # Redirect to login page or handle as appropriate
+
     code = posts.code
-    postsdata=Hospitaldata.query.filter_by(code=code).first()
+    postsdata = Hospitaldata.query.filter_by(code=code).first()
+
     if request.method == "POST":
         code = request.form.get('code')
         hname = request.form.get('hname')
@@ -312,20 +279,25 @@ def addhospitalinfo():
         ibed = request.form.get('icubeds')
         vbed = request.form.get('vbeds')
         code = code.upper()
-        # email = session.get('email')
+        
         huser = Hospitaluser.query.filter_by(code=code).first()
         hduser = Hospitaldata.query.filter_by(code=code).first()
+        
         if hduser:
-            flash("Data is already present you can update ", "primary")
+            flash("Data is already present, you can update", "primary")
             return render_template("hospitaldata.html")
+        
         if huser:
             new_hos_data = Hospitaldata(code=code, hname=hname, normalbeds=nbed, hicubeds=hbed, icubeds=ibed, vbeds=vbed)
             db.session.add(new_hos_data)
             db.session.commit()
             flash("Data is added", "primary")
+            return redirect("/addhospitalinfo")
         else:
-            flash("Hospital code doesnt exist", "warning")
-    return render_template("hospitaldata.html",postsdata=postsdata)
+            flash("Hospital code doesn't exist", "warning")
+    
+    return render_template("hospitaldata.html", postsdata=postsdata)
+
 
 @app.route("/hedit/<string:id>", methods=['POST', 'GET'])
 @login_required
@@ -337,7 +309,6 @@ def hedit(id):
         hbed = request.form.get('hicubeds')
         ibed = request.form.get('icubeds')
         vbed = request.form.get('vbeds')
-        # Assuming Hospitaldata is your SQLAlchemy model
         hospital = Hospitaldata.query.filter_by(id=id).first()
         if hospital:
             hospital.hname = hname

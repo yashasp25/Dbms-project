@@ -9,20 +9,21 @@ Hospital User
 
 <div class="row">
     <div class="col-md-4">
-    <a href="/logoutadmin" class="btn btn-danger">Logout</a></div>
+    </div>
     <div class="col-md-4">
         <form action="/addhospitalUser" method="post">
             <div class="form-group">
                 <input type="text" class="form-control mt-2" placeholder="Enter Hospital Code" name="code" required>
             </div>
             <div class="form-group">
-                <input type="email" class="form-control mt-2" placeholder="Enter Email ID" name="email" required>
+                <input type="text" class="form-control mt-2" placeholder="Enter Email ID" name="email" required>
             </div>
             <div class="form-group">
-                <input type="text" class="form-control mt-2" placeholder="Enter password" name="password" required>
+                <input type="text" class="form-control mt-2" placeholder="Create password" name="password" required>
             </div>
             <br>
             <button class="btn btn-info" type="submit">Add</button>
+            <a href="/logoutadmin" class="btn btn-danger">Logout</a>
         </form>
 
 

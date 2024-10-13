@@ -1,15 +1,20 @@
-{% extends 'baselogin.html' %}
+{% extends 'navbar.html' %}
 {% block title %}
 Trigered data
 {% endblock title %}
+{% block body %}
 {% block form %}
-<h2>Triggers</h2>
+<br>
+<br>
+<br><br>
+<br>
+
+<h2 class="text-center text-info">Triggers</h2>
 {% include "message.html" %}
 
-
 <div class="container mt-2">
+  
     <table class="table">
-        <h3>Triggered data</h3>
         <thead>
           <tr>
             <th scope="col">Hospital code</th>
@@ -39,3 +44,4 @@ Trigered data
       </table>
 </div>
 {% endblock form %}
+{% endblock body %}

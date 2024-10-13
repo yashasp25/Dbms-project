@@ -29,7 +29,7 @@
   <link href="static/assets/css/style.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   </head>
-
+  
 <body>
 
   <!-- ======= Top Bar ======= -->
@@ -58,8 +58,7 @@
             <li><a class="nav-link scrollto" href="/about">About</a></li>
             <li><a class="nav-link scrollto" href="/pdetails">Patient Details</a></li>
             <li><a class="nav-link scrollto" href="/slotbooking">Available Beds</a></li>
-  
-  
+
   {% if current_user.is_authenticated and current_user.code %}
             <li class="dropdown"><a href="/login"><span>Welcome `{{current_user.email}}`</span> <i class="bi bi-chevron-down"></i></a>
               <ul>
