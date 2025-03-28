@@ -33,6 +33,3 @@ Documentation:
 Add comments and docstrings to explain complex logic and improve code readability.
 Create a README file with instructions on how to set up and run the application.
 
-Testing:
-Write unit tests and integration tests to ensure the correctness of critical application functionalities.
-Use testing frameworks like pytest for automated testing.
